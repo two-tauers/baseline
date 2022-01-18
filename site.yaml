@@ -1,0 +1,17 @@
+---
+
+# Handle the enforced password change at first login
+- hosts: all
+  gather_facts: no
+  become: no
+  vars:
+    hello: there
+  roles:
+    - role: first-time-login/ubuntu
+
+# Create new users and disable the default user
+# - hosts: all
+#   gather_facts: no
+#   become: yes
+#   roles:
+#     - role: users/ubuntu

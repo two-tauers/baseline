@@ -1,0 +1,22 @@
+---
+
+# Ubuntu requires password change on first login
+# this task will read the pass from file if this was already done
+
+- name: "Try first login and change the password if required"
+  delegate_to: localhost
+  ignore_unreachable: true
+  ignore_errors: true # hosts with passwords already changed will raise an error
+  # no_log: true
+  expect:
+    command: sshpass -p {{ ubuntu_default_password }} ssh {{ ansible_ssh_common_args }} {{ ansible_ssh_user }}@{{ ansible_host }}
+    timeout: 10
+    responses:
+      "Current password: ": "{{ ubuntu_default_password }}"
+      "New password: ": "{{ ansible_ssh_password }}"
+      "Retype new password: ": "{{ ansible_ssh_password }}"
+  register: password_change
+  changed_when: "'passwd: password updated successfully' in password_change.stdout"
+
+- name: PING
+  action: ping
