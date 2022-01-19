@@ -1,0 +1,8 @@
+---
+hostname: "{{ inventory_hostname_short }}"
+memsplit: "16"
+wifi_enabled: no
+bt_enabled: no
+fan_control: yes
+timezone: "UTC"
+reboot: yes

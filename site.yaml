@@ -4,14 +4,15 @@
 - hosts: all
   gather_facts: no
   become: no
-  vars:
-    hello: there
   roles:
-    - role: first-time-login/ubuntu
+    - role: first-time-login
+    - role: users
+      become: yes
 
-# Create new users and disable the default user
-# - hosts: all
-#   gather_facts: no
-#   become: yes
-#   roles:
-#     - role: users/ubuntu
+# Create new users, disable the default user, configure
+- hosts: all
+  gather_facts: yes
+  become: yes
+  roles:
+    - role: configure
+    - role: apt-upgrade
