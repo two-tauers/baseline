@@ -5,7 +5,7 @@
   gather_facts: no
   become: no
   roles:
-    - role: first-time-login
+    - role: first_time_login
     - role: users
       become: yes
 
@@ -15,4 +15,4 @@
   become: yes
   roles:
     - role: configure
-    - role: apt-upgrade
+    - role: apt_upgrade
