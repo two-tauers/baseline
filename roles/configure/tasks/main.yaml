@@ -1,0 +1,88 @@
+---
+
+# hostname
+- name: Set hostname
+  hostname: name="{{ hostname }}"
+
+# memsplit
+- name: Check memsplit
+  command: "awk /^gpu_mem={{memsplit}}$/ /boot/firmware/config.txt"
+  register: memsplit_set
+  check_mode: no
+  ignore_errors: yes
+  changed_when: no
+
+- name: Set memsplit
+  lineinfile:
+    path: /boot/firmware/config.txt
+    regexp: '^gpu_mem='
+    line: 'gpu_mem={{memsplit}}'
+  when: memsplit_set.rc != 0
+
+# wifi_enabled
+- name: Set wifi status - disable
+  lineinfile:
+    path: /boot/firmware/config.txt
+    regexp: '^dtoverlay=disable-wifi'
+    line: 'dtoverlay=disable-wifi'
+    state: present
+  when: wifi_enabled|default(false) == false
+
+- name: Set wifi status - enable
+  lineinfile:
+    path: /boot/firmware/config.txt
+    regexp: '^dtoverlay=disable-wifi'
+    line: 'dtoverlay=disable-wifi'
+    state: absent
+  when: wifi_enabled|default(false) == true
+
+# bt_enabled
+- name: Set bt status - disable
+  lineinfile:
+    path: /boot/firmware/config.txt
+    regexp: '^dtoverlay=disable-bt'
+    line: 'dtoverlay=disable-bt'
+    state: present
+  when: bt_enabled|default(false) == false
+
+- name: Set bt status - enable
+  lineinfile:
+    path: /boot/firmware/config.txt
+    regexp: '^dtoverlay=disable-bt'
+    line: 'dtoverlay=disable-bt'
+    state: absent
+  when: bt_enabled|default(false) == true
+
+
+# fan_control
+- name: Enable fan control
+  lineinfile:
+    path: /boot/firmware/config.txt
+    regexp: '^dtoverlay=gpio-fan,gpiopin=3,temp=70000'
+    line: 'dtoverlay=gpio-fan,gpiopin=3,temp=70000'
+    state: present
+  when: fan_control|default(false) == true
+
+- name: Disable fan control
+  lineinfile:
+    path: /boot/firmware/config.txt
+    regexp: '^dtoverlay=gpio-fan,gpiopin=3,temp=70000'
+    line: 'dtoverlay=gpio-fan,gpiopin=3,temp=70000'
+    state: absent
+  when: fan_control|default(false) == false
+
+# timezone
+- name: Check timezone
+  command: grep "{{timezone}}" /etc/timezone
+  register: timezone_set
+  failed_when: false
+  changed_when: false
+
+- name: Set timezone
+  command: timedatectl set-timezone {{timezone}} #sudo?
+  when: timezone_set.rc != 0
+
+# REBOOT
+- name: Reboot
+  reboot:
+    reboot_timeout: 360
