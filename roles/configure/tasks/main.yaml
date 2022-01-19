@@ -6,7 +6,7 @@
 
 # memsplit
 - name: Check memsplit
-  command: "awk /^gpu_mem={{memsplit}}$/ /boot/firmware/config.txt"
+  command: "awk /^gpu_mem={{ memsplit }}$/ /boot/firmware/config.txt"
   register: memsplit_set
   check_mode: no
   ignore_errors: yes
@@ -16,7 +16,7 @@
   lineinfile:
     path: /boot/firmware/config.txt
     regexp: '^gpu_mem='
-    line: 'gpu_mem={{memsplit}}'
+    line: 'gpu_mem={{ memsplit }}'
   when: memsplit_set.rc != 0
 
 # wifi_enabled
@@ -26,7 +26,7 @@
     regexp: '^dtoverlay=disable-wifi'
     line: 'dtoverlay=disable-wifi'
     state: present
-  when: wifi_enabled|default(false) == false
+  when: not wifi_enabled
 
 - name: Set wifi status - enable
   lineinfile:
@@ -34,7 +34,7 @@
     regexp: '^dtoverlay=disable-wifi'
     line: 'dtoverlay=disable-wifi'
     state: absent
-  when: wifi_enabled|default(false) == true
+  when: wifi_enabled
 
 # bt_enabled
 - name: Set bt status - disable
@@ -43,7 +43,7 @@
     regexp: '^dtoverlay=disable-bt'
     line: 'dtoverlay=disable-bt'
     state: present
-  when: bt_enabled|default(false) == false
+  when: not bt_enabled
 
 - name: Set bt status - enable
   lineinfile:
@@ -51,7 +51,7 @@
     regexp: '^dtoverlay=disable-bt'
     line: 'dtoverlay=disable-bt'
     state: absent
-  when: bt_enabled|default(false) == true
+  when: bt_enabled
 
 
 # fan_control
@@ -61,7 +61,7 @@
     regexp: '^dtoverlay=gpio-fan,gpiopin=3,temp=70000'
     line: 'dtoverlay=gpio-fan,gpiopin=3,temp=70000'
     state: present
-  when: fan_control|default(false) == true
+  when: fan_control
 
 - name: Disable fan control
   lineinfile:
@@ -69,17 +69,17 @@
     regexp: '^dtoverlay=gpio-fan,gpiopin=3,temp=70000'
     line: 'dtoverlay=gpio-fan,gpiopin=3,temp=70000'
     state: absent
-  when: fan_control|default(false) == false
+  when: not fan_control
 
 # timezone
 - name: Check timezone
-  command: grep "{{timezone}}" /etc/timezone
+  command: grep "{{ timezone }}" /etc/timezone
   register: timezone_set
   failed_when: false
   changed_when: false
 
 - name: Set timezone
-  command: timedatectl set-timezone {{timezone}} #sudo?
+  command: timedatectl set-timezone {{ timezone }}
   when: timezone_set.rc != 0
 
 # REBOOT
