@@ -1,7 +1,7 @@
 ---
 name: Lint
 
-on:
+on: # yamllint disable-line
   workflow_dispatch:
   push:
     branches:
@@ -20,7 +20,7 @@ on:
 jobs:
 
   lint:
-    name: Lint ansible files on ${{ matrix.os }} / py${{ matrix.python-version }}
+    name: Lint on ${{ matrix.os }} / py${{ matrix.python-version }}
     runs-on: ${{ matrix.image }}
     strategy:
       matrix:
