@@ -20,11 +20,11 @@ on:
 jobs:
 
   lint:
-    name: ${{ matrix.os }} / ${{ matrix.python-version }} ${{ matrix.suffix }}
+    name: Lint ansible files on ${{ matrix.os }} / py${{ matrix.python-version }}
     runs-on: ${{ matrix.image }}
     strategy:
       matrix:
-        os: [ubuntu-18.04, ubuntu-20.04, macos, windows]
+        os: [ubuntu-18.04, ubuntu-20.04, macos-11, windows]
         python-version: ["3.8", "3.9", "3.10"]
         include:
           - os: ubuntu-18.04
