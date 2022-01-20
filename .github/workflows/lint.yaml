@@ -20,7 +20,7 @@ on: # yamllint disable-line
 jobs:
 
   lint:
-    name: Lint on ${{ matrix.os }} / py${{ matrix.python-version }}
+    name: ${{ matrix.os }} / py${{ matrix.python-version }}
     runs-on: ${{ matrix.image }}
     strategy:
       matrix:
