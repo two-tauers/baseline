@@ -24,13 +24,11 @@ jobs:
     runs-on: ${{ matrix.image }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, macos-11]
+        os: [ubuntu-20.04]
         python-version: ["3.8", "3.9", "3.10"]
         include:
           - os: ubuntu-20.04
             image: ubuntu-20.04
-          - os: macos-11
-            image: macos-11
       fail-fast: false
     defaults:
       run:
