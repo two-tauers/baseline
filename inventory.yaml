@@ -6,6 +6,9 @@ all:
       "{{ lookup('env','HOME') }}/.ssh/two-tauers-ansible"
     timezone: "Europe/London"
 
+    perform_initial_password_change: yes
+    create_users: yes
+
     users:
       - username: ansible
         sudoer: yes
@@ -13,9 +16,6 @@ all:
       - username: tt
         sudoer: yes
         key_path: "{{ lookup('env', 'HOME') }}/.ssh/id_ed25519"
-
-    perform_initial_password_change: yes
-    create_users: yes
 
   hosts:
     sauron:
