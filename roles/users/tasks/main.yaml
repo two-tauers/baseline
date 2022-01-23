@@ -9,6 +9,7 @@
   # key_stat.results[i].stdout will be "0" if there is no key, otherwise "1"
   - name: Check if the ssh keys already exist locally
     delegate_to: localhost
+    become: false
     shell: "ls -l {{ item.key_path }} | wc -l"
     with_items: "{{ users }}"
     register: key_stat
@@ -20,6 +21,13 @@
       creates: "{{ item.item.key_path }}"
     with_items: "{{ key_stat.results }}"
     when: item.stdout == "0"
+
+  - name: Ensure SSH keys permissions
+    delegate_to: localhost
+    file:
+      path: "{{ item.key_path }}"
+      owner: "{{ ansible_env.SUDO_UID }}"
+    with_items: "{{ users }}"
 
   # Create the users
 

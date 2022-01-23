@@ -2,12 +2,16 @@
 
 # Handle the enforced password change at first login
 - hosts: all
-  gather_facts: no
   become: no
+  gather_facts: no
   roles:
     - role: first_time_login
+
+- hosts: all
+  gather_facts: yes
+  become: yes
+  roles:
     - role: users
-      become: yes
 
 # Create new users, disable the default user, configure
 - hosts: all

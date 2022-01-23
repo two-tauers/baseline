@@ -20,8 +20,6 @@
         "New password: ": "{{ ansible_ssh_password }}"
         "Retype new password: ": "{{ ansible_ssh_password }}"
     register: password_change
-    changed_when:
-      "'passwd: password updated successfully' in password_change.stdout"
 
   - name: PING
     action: ping
