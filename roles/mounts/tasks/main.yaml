@@ -1,0 +1,52 @@
+---
+
+- when: mounts|length > 0
+  block:
+
+  - name: Creates mountpoint directories
+    file:
+      path: "{{ item.mountpoint }}"
+      state: directory
+    with_items: "{{ mounts }}"
+    when: item.host|string == inventory_hostname
+
+  - name: Mount up devices by label
+    ansible.posix.mount:
+      path: "{{ item.mountpoint }}"
+      src: "LABEL={{ item.label }}"
+      fstype: "{{ item.fstype }}"
+      state: present
+    with_items: "{{ mounts }}"
+    when: item.host|string == inventory_hostname
+
+  # add nfs and nfsd to make NFS server pods work
+  # not sure if this works on boot
+  - name: Enable nfs
+    lineinfile:
+      path: /etc/modules-load.d/nfs.conf
+      line: nfs
+      create: yes
+
+  - name: Enable nfsd
+    lineinfile:
+      path: /etc/modules-load.d/nfsd.conf
+      line: nfsd
+      create: yes
+
+  # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/reboot_module.html
+  - name: Wait for servers to restart
+    reboot: # new in ansible 2.7+: 
+      reboot_timeout: 3600
+    with_items: "{{ mounts }}"
+    when: item.host|string == inventory_hostname
+
+  # this is a workaround for loading kernel modules
+  - name: Add the nfs module
+    community.general.modprobe:
+      name: nfs
+      state: present
+
+  - name: Add the nfsd module
+    community.general.modprobe:
+      name: nfsd
+      state: present

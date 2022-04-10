@@ -16,6 +16,12 @@ all:
       - username: tt
         sudoer: yes
         key_path: "{{ lookup('env', 'HOME') }}/.ssh/id_ed25519"
+    
+    mounts:
+      - label: persistent
+        mountpoint: /storage
+        fstype: ext4
+        host: sauron
 
   hosts:
     sauron:
