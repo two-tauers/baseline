@@ -10,6 +10,7 @@
   - name: Check if the ssh keys already exist locally
     delegate_to: localhost
     become: false
+    changed_when: false
     ansible.builtin.shell: "ls -l {{ item.key_path }} | wc -l"
     with_items: "{{ users }}"
     register: key_stat
@@ -33,7 +34,7 @@
   # Create the users
 
   - name: Create users
-    user:
+    ansible.builtin.user:
       name: "{{ item.username }}"
       state: present
       create_home: true
@@ -42,7 +43,7 @@
 
   - name: Add users to sudoers
     become: true
-    copy:
+    ansible.builtin.copy:
       dest: "/etc/sudoers.d/{{ item.username }}"
       content: "{{ item.username }}  ALL=(ALL)  NOPASSWD: ALL"
       mode: preserve
@@ -57,6 +58,6 @@
     with_items: "{{ users }}"
 
   - name: Disable password for the default user
-    user:
+    ansible.builtin.user:
       name: ubuntu
       password_lock: yes

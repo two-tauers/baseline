@@ -21,5 +21,4 @@
         "Retype new password: ": "{{ ansible_ssh_password }}"
     register: password_change
 
-  - name: PING
-    ansible.builtin.action: ping
+  - ansible.builtin.action: ping
