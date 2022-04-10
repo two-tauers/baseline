@@ -7,6 +7,7 @@
     file:
       path: "{{ item.mountpoint }}"
       state: directory
+      mode: 0644
     with_items: "{{ mounts }}"
     when: item.host|string == inventory_hostname
 
@@ -26,12 +27,14 @@
       path: /etc/modules-load.d/nfs.conf
       line: nfs
       create: yes
+      mode: 0644
 
   - name: Enable nfsd
     lineinfile:
       path: /etc/modules-load.d/nfsd.conf
       line: nfsd
       create: yes
+      mode: 0644
 
   # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/reboot_module.html
   - name: Wait for servers to restart

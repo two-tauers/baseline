@@ -16,7 +16,8 @@
 
   - name: Generate missing ssh keys
     delegate_to: localhost
-    command: 'ssh-keygen -q -t ed25519 -f {{ item.item.key_path }} -C "" -N ""'
+    ansible.builtin.command: |
+      ssh-keygen -q -t ed25519 -f {{ item.item.key_path }} -C "" -N ""
     args:
       creates: "{{ item.item.key_path }}"
     with_items: "{{ key_stat.results }}"
