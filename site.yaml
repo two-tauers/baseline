@@ -8,7 +8,7 @@
     - role: first_time_login
 
 - hosts: all
-  gather_facts: yes
+  gather_facts: no
   become: yes
   roles:
     - role: users
@@ -20,3 +20,4 @@
   roles:
     - role: configure
     - role: apt_upgrade
+    - role: mounts
