@@ -35,7 +35,7 @@
 
   # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/reboot_module.html
   - name: Wait for servers to restart
-    reboot: # new in ansible 2.7+: 
+    reboot:  # new in ansible 2.7+:
       reboot_timeout: 3600
     with_items: "{{ mounts }}"
     when: item.host|string == inventory_hostname
