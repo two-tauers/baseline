@@ -9,7 +9,7 @@
     # hosts with passwords already changed will raise an error
     ignore_unreachable: true
     ignore_errors: true
-    expect:
+    ansible.builtin.expect:
       command: >
         sshpass -p {{ ubuntu_default_password }}
         ssh {{ ansible_ssh_common_args }}
@@ -20,6 +20,3 @@
         "New password: ": "{{ ansible_ssh_password }}"
         "Retype new password: ": "{{ ansible_ssh_password }}"
     register: password_change
-
-  - name: PING
-    action: ping
