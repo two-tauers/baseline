@@ -4,7 +4,7 @@
   block:
 
   - name: Creates mountpoint directories
-    file:
+    ansible.builtin.file:
       path: "{{ item.mountpoint }}"
       state: directory
       mode: 0644
@@ -23,14 +23,14 @@
   # add nfs and nfsd to make NFS server pods work
   # not sure if this works on boot
   - name: Enable nfs
-    lineinfile:
+    ansible.builtin.lineinfile:
       path: /etc/modules-load.d/nfs.conf
       line: nfs
       create: yes
       mode: 0644
 
   - name: Enable nfsd
-    lineinfile:
+    ansible.builtin.lineinfile:
       path: /etc/modules-load.d/nfsd.conf
       line: nfsd
       create: yes
@@ -38,7 +38,7 @@
 
   # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/reboot_module.html
   - name: Wait for servers to restart
-    reboot:  # new in ansible 2.7+:
+    ansible.builtin.reboot:  # new in ansible 2.7+:
       reboot_timeout: 3600
     with_items: "{{ mounts }}"
     when: item.host|string == inventory_hostname

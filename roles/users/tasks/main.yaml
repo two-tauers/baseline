@@ -10,7 +10,7 @@
   - name: Check if the ssh keys already exist locally
     delegate_to: localhost
     become: false
-    shell: "ls -l {{ item.key_path }} | wc -l"
+    ansible.builtin.shell: "ls -l {{ item.key_path }} | wc -l"
     with_items: "{{ users }}"
     register: key_stat
 
@@ -25,7 +25,7 @@
 
   - name: Ensure SSH keys permissions
     delegate_to: localhost
-    file:
+    ansible.builtin.file:
       path: "{{ item.key_path }}"
       owner: "{{ ansible_env.SUDO_UID }}"
     with_items: "{{ users }}"
