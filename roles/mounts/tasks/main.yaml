@@ -1,6 +1,7 @@
 ---
 
-- when: mounts|length > 0
+- name: Mount drives
+  when: mounts|length > 0
   block:
 
   - name: Creates mountpoint directories
