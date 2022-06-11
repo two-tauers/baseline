@@ -1,22 +1,25 @@
 ---
 
-- name: Check the connection
-  ansible.builtin.ping:
-  ignore_unreachable: true
+- name: Check connection
+  ansible.builtin.wait_for_connection:
+    timeout: 30
   ignore_errors: true
   register: connection_status
 
 - name: Ubuntu first time login password change
-  when: "'ping' not in connection_status"
-  become: false
-  include: change_default_password.yaml
+  ansible.builtin.include_tasks: change_default_password.yaml
+  when: |
+    connection_status.failed and
+    'Permission denied' in connection_status.msg
 
 - name: Use temporary Ubuntu credentials
-  when: "'ping' not in connection_status"
-  set_fact:
+  ansible.builtin.set_fact:
     ansible_ssh_user: "{{ ubuntu_default_user }}"
     ansible_ssh_password: "{{ ubuntu_temp_password }}"
     ansible_ssh_common_args: "{{ ssh_password_auth_args }}"
+  when: |
+    connection_status.failed and
+    'Permission denied' in connection_status.msg
 
 - name: Create users with passwordless access
-  include: create_users.yaml
+  ansible.builtin.include_tasks: create_users.yaml
