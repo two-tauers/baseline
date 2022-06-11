@@ -1,13 +1,13 @@
 ---
 - name: Update apt cache and upgrade all packages
   ansible.builtin.apt:
-    update_cache: yes
-    upgrade: yes
+    update_cache: true
+    upgrade: true
 
 - name: Remove useless packages from the cache
   ansible.builtin.apt:
-    autoclean: yes
+    autoclean: true
 
 - name: Remove dependencies that are no longer required
   ansible.builtin.apt:
-    autoremove: yes
+    autoremove: true

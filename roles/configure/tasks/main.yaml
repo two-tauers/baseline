@@ -3,15 +3,16 @@
 # hostname
 - name: Set hostname
   ansible.builtin.hostname: name="{{ hostname }}"
+  notify: reboot
 
 # memsplit
 - name: Check memsplit
   ansible.builtin.command: |
     awk /^gpu_mem={{ memsplit }}$/ /boot/firmware/config.txt
   register: memsplit_set
-  check_mode: no
-  ignore_errors: yes
-  changed_when: no
+  check_mode: false
+  ignore_errors: true
+  changed_when: false
 
 - name: Set memsplit
   ansible.builtin.lineinfile:
@@ -19,6 +20,7 @@
     regexp: '^gpu_mem='
     line: 'gpu_mem={{ memsplit }}'
   when: memsplit_set.rc != 0
+  notify: reboot
 
 # wifi_enabled
 - name: Set wifi status - disable
@@ -28,6 +30,7 @@
     line: 'dtoverlay=disable-wifi'
     state: present
   when: not wifi_enabled
+  notify: reboot
 
 - name: Set wifi status - enable
   ansible.builtin.lineinfile:
@@ -36,6 +39,7 @@
     line: 'dtoverlay=disable-wifi'
     state: absent
   when: wifi_enabled
+  notify: reboot
 
 # bt_enabled
 - name: Set bt status - disable
@@ -45,6 +49,7 @@
     line: 'dtoverlay=disable-bt'
     state: present
   when: not bt_enabled
+  notify: reboot
 
 - name: Set bt status - enable
   ansible.builtin.lineinfile:
@@ -53,6 +58,7 @@
     line: 'dtoverlay=disable-bt'
     state: absent
   when: bt_enabled
+  notify: reboot
 
 
 # fan_control
@@ -63,6 +69,7 @@
     line: 'dtoverlay=gpio-fan,gpiopin=3,temp=70000'
     state: present
   when: fan_control
+  notify: reboot
 
 - name: Disable fan control
   ansible.builtin.lineinfile:
@@ -71,6 +78,7 @@
     line: 'dtoverlay=gpio-fan,gpiopin=3,temp=70000'
     state: absent
   when: not fan_control
+  notify: reboot
 
 # timezone
 - name: Check timezone
@@ -82,8 +90,4 @@
 - name: Set timezone
   ansible.builtin.command: timedatectl set-timezone {{ timezone }}
   when: timezone_set.rc != 0
-
-# REBOOT
-- name: Reboot
-  ansible.builtin.reboot:
-    reboot_timeout: 360
+  notify: reboot

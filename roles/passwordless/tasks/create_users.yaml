@@ -59,4 +59,4 @@
 - name: Disable password for the default user
   ansible.builtin.user:
     name: ubuntu
-    password_lock: yes
+    password_lock: true
