@@ -1,8 +1,8 @@
 ---
 hostname: "{{ inventory_hostname_short }}"
 memsplit: "16"
-wifi_enabled: no
-bt_enabled: no
-fan_control: yes
+wifi_enabled: false
+bt_enabled: false
+fan_control: true
 timezone: "UTC"
-reboot: yes
+reboot: true

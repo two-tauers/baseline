@@ -32,7 +32,7 @@
     ansible.builtin.lineinfile:
       path: /etc/modules-load.d/nfs.conf
       line: nfs
-      create: yes
+      create: true
       mode: 0644
     notify: reboot
     when: inventory_hostname in mounts | map(attribute='host') | list
@@ -41,7 +41,7 @@
     ansible.builtin.lineinfile:
       path: /etc/modules-load.d/nfsd.conf
       line: nfsd
-      create: yes
+      create: true
       mode: 0644
     notify: reboot
     when: inventory_hostname in mounts | map(attribute='host') | list
