@@ -1,23 +1,9 @@
 ---
-
-# Handle the enforced password change at first login
 - hosts: all
-  become: no
-  gather_facts: no
+  become: true
+  gather_facts: false
   roles:
-    - role: first_time_login
-
-- hosts: all
-  gather_facts: no
-  become: yes
-  roles:
-    - role: users
-
-# Create new users, disable the default user, configure
-- hosts: all
-  gather_facts: yes
-  become: yes
-  roles:
+    - role: passwordless
     - role: configure
     - role: apt_upgrade
     - role: mounts

@@ -1,0 +1,7 @@
+---
+ubuntu_default_user: ubuntu
+ubuntu_default_password: ubuntu
+ubuntu_temp_password: dummy-password
+ssh_password_auth_args: >
+  -o StrictHostKeyChecking=no
+  -o PreferredAuthentications=password
