@@ -1,28 +1,5 @@
 ---
 all:
-  vars:
-    ansible_ssh_user: ansible
-    ansible_ssh_private_key_file:
-      "{{ lookup('env','HOME') }}/.ssh/two-tauers-ansible"
-    timezone: "Europe/London"
-
-    perform_initial_password_change: yes
-    create_users: yes
-
-    users:
-      - username: ansible
-        sudoer: yes
-        key_path: "{{ ansible_ssh_private_key_file }}"
-      - username: tt
-        sudoer: yes
-        key_path: "{{ lookup('env', 'HOME') }}/.ssh/id_ed25519"
-
-    mounts:
-      - label: persistent
-        mountpoint: /storage
-        fstype: ext4
-        host: sauron
-
   hosts:
     sauron:
       ansible_host: 192.168.0.100
@@ -32,3 +9,24 @@ all:
       ansible_host: 192.168.0.102
     orker3:
       ansible_host: 192.168.0.103
+
+  vars:
+    ansible_ssh_user: ansible
+    ansible_ssh_private_key_file:
+      "{{ lookup('env','HOME') }}/.ssh/two-tauers-ansible"
+      
+    timezone: "Europe/London"
+
+    users:
+      - username: ansible
+        key_path: "{{ ansible_ssh_private_key_file }}"
+        sudoer: yes
+      - username: tt
+        key_path: "{{ lookup('env', 'HOME') }}/.ssh/id_ed25519"
+        sudoer: yes
+
+    mounts:
+      - label: persistent
+        mountpoint: /storage
+        fstype: ext4
+        host: sauron

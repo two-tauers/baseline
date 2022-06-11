@@ -1,0 +1,74 @@
+---
+
+- name: Check the connection
+  ansible.builtin.ping:
+  ignore_unreachable: yes
+  ignore_errors: true
+  register: connection_status
+
+- when: |
+    'ping' not in connection_status and
+    connection_status.unreachable
+  block:
+    - name: Use default Ubuntu credentials
+      set_fact:
+        ansible_ssh_user: "{{ ubuntu_default_user }}"
+        ansible_ssh_password: "{{ ubuntu_default_password }}"
+        ansible_ssh_common_args: "{{ ssh_password_auth_args }}"
+
+    - name: Try changing the default password
+      delegate_to: localhost
+      ignore_unreachable: true
+      ignore_errors: true
+      ansible.builtin.expect:
+        command: >
+          sshpass -p {{ ansible_ssh_password }}
+          ssh {{ ansible_ssh_common_args }}
+          {{ ansible_ssh_user }}@{{ ansible_host }}
+        responses:
+          "Current password: ": "{{ ansible_ssh_password }}"
+          "New password: ": "{{ ubuntu_temp_password }}"
+          "Retype new password: ": "{{ ubuntu_temp_password }}"
+        timeout: 10
+      register: default_password_change
+
+- name: Use temporary Ubuntu credentials
+  set_fact:
+    ansible_ssh_user: "{{ ubuntu_default_user }}"
+    ansible_ssh_password: "{{ ubuntu_temp_password }}"
+    ansible_ssh_common_args: "{{ ssh_password_auth_args }}"
+  when: |
+    'ping' not in connection_status and
+    connection_status.unreachable
+
+- become: yes
+  block:
+  
+  - name: Create users
+    ansible.builtin.user:
+      name: "{{ item.username }}"
+      state: present
+      create_home: true
+      shell: /bin/bash
+    with_items: "{{ users }}"
+
+  - name: Add users to sudoers
+    become: true
+    ansible.builtin.copy:
+      dest: "/etc/sudoers.d/{{ item.username }}"
+      content: "{{ item.username }}  ALL=(ALL)  NOPASSWD: ALL"
+      mode: preserve
+    with_items: "{{ users }}"
+    when: item.sudoer
+
+  - name: Copy public key to the hosts
+    authorized_key:
+      user: "{{ item.username }}"
+      key: "{{ lookup('file', '{{ item.key_path }}.pub') }}"
+      state: present
+    with_items: "{{ users }}"
+
+  - name: Disable password for the default user
+    ansible.builtin.user:
+      name: ubuntu
+      password_lock: yes

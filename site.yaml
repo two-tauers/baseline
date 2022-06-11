@@ -1,23 +1,16 @@
 ---
 
 # Handle the enforced password change at first login
-- hosts: all
+- hosts: orker3
   become: no
   gather_facts: no
   roles:
-    - role: first_time_login
+    - role: passwordless
 
-- hosts: all
-  gather_facts: no
-  become: yes
-  roles:
-    - role: users
-
-# Create new users, disable the default user, configure
-- hosts: all
-  gather_facts: yes
-  become: yes
-  roles:
-    - role: configure
-    - role: apt_upgrade
-    - role: mounts
+# - hosts: all
+#   gather_facts: yes
+#   become: yes
+#   roles:
+#     - role: configure
+#     - role: apt_upgrade
+#     - role: mounts
