@@ -1,5 +1,4 @@
 ---
-
 - name: Mount drives and set up NFS
   when: mounts|length > 0
   block:
