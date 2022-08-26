@@ -1,0 +1,14 @@
+---
+- name: Creates mountpoint directories
+  ansible.builtin.file:
+    path: "{{ item.mountpoint }}"
+    state: directory
+    mode: 0644
+
+- name: Mount up devices by label
+  ansible.posix.mount:
+    path: "{{ item.mountpoint }}"
+    src: "LABEL={{ item.label }}"
+    fstype: "{{ item.fstype }}"
+    state: present
+  notify: reboot

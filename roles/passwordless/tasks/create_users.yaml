@@ -60,3 +60,8 @@
   ansible.builtin.user:
     name: ubuntu
     password_lock: true
+
+- name: Ensure ansible user is used from now on
+  ansible.builtin.set_fact:
+    ansible_ssh_user: "{{ ansible_default_user }}"
+    ansible_ssh_common_args: "{{ ssh_publickey_auth_args }}"

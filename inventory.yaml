@@ -11,14 +11,16 @@ all:
       ansible_host: 192.168.0.103
 
   vars:
-    ansible_ssh_user: ansible
+    ansible_default_user: ansible
+
+    ansible_ssh_user: "{{ ansible_default_user }}"
     ansible_ssh_private_key_file:
       "{{ lookup('env','HOME') }}/.ssh/two-tauers-ansible"
 
     timezone: "Europe/London"
 
     users:
-      - username: ansible
+      - username: "{{ ansible_default_user }}"
         key_path: "{{ ansible_ssh_private_key_file }}"
         sudoer: true
       - username: tt
