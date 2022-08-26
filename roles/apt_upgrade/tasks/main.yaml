@@ -2,7 +2,7 @@
 - name: Update apt cache and upgrade all packages
   ansible.builtin.apt:
     update_cache: true
-    upgrade: true
+    upgrade: 'safe'
 
 - name: Remove useless packages from the cache
   ansible.builtin.apt:
