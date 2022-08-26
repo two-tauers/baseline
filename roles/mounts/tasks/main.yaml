@@ -1,60 +1,16 @@
 ---
 
-- name: Mount drives
+- name: Mount drives and set up NFS
   when: mounts|length > 0
   block:
 
-  - name: Creates mountpoint directories
-    ansible.builtin.file:
-      path: "{{ item.mountpoint }}"
-      state: directory
-      mode: 0644
-    with_items: "{{ mounts }}"
+  - name: Mount drives
+    ansible.builtin.include_tasks: mount.yaml
     when: item.host|string == inventory_hostname
+    with_items: "{{ mounts }}"
     loop_control:
       label: "{{ item.label }} mount at {{ item.mountpoint }}"
 
-  - name: Mount up devices by label
-    ansible.posix.mount:
-      path: "{{ item.mountpoint }}"
-      src: "LABEL={{ item.label }}"
-      fstype: "{{ item.fstype }}"
-      state: present
-    with_items: "{{ mounts }}"
-    when: item.host|string == inventory_hostname
-    loop_control:
-      label: "{{ item.label }} mount at {{ item.mountpoint }}"
-    notify: reboot
-
-  # add nfs and nfsd to make NFS server pods work
-  # not sure if this works on boot
-  - name: Enable nfs
-    ansible.builtin.lineinfile:
-      path: /etc/modules-load.d/nfs.conf
-      line: nfs
-      create: true
-      mode: 0644
-    notify: reboot
-    when: inventory_hostname in mounts | map(attribute='host') | list
-
-  - name: Enable nfsd
-    ansible.builtin.lineinfile:
-      path: /etc/modules-load.d/nfsd.conf
-      line: nfsd
-      create: true
-      mode: 0644
-    notify: reboot
-    when: inventory_hostname in mounts | map(attribute='host') | list
-
-  # this is a workaround for loading kernel modules
-  - name: Add the nfs module
-    community.general.modprobe:
-      name: nfs
-      state: present
-    when: inventory_hostname in mounts | map(attribute='host') | list
-
-  - name: Add the nfsd module
-    community.general.modprobe:
-      name: nfsd
-      state: present
+  - name: Set up NFS
+    ansible.builtin.include_tasks: nfs.yaml
     when: inventory_hostname in mounts | map(attribute='host') | list
