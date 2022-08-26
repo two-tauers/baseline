@@ -27,7 +27,11 @@ If any changes are made, the host is restarted.
 Runs `apt update && apt upgrade` on all hosts.
 When run on a freshly installed OS, this step might take a while.
 At the time of writing this there were 90+ upgradeable packages, which took 10+ minutes to complete.
-If you have fan control as configured above, some fans might spin up if the CPUs reach 70 C.
+If you have fan control as configured above, some fans might spin up.
+
+### mounts
+
+Mounts the drives listed in the `mounts` variable in `inventory.yaml` and installs packages required for NFS to work on the nodes with those mounts. Does not set up the NFS shares themselves.
 
 ## Prerequisites
 
