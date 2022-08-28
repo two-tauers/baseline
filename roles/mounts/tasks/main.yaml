@@ -13,3 +13,8 @@
   - name: Set up NFS
     ansible.builtin.include_tasks: nfs.yaml
     when: inventory_hostname in mounts | map(attribute='host') | list
+
+  - name: Add the nfs-common package
+    ansible.builtin.apt:
+      name: nfs-common
+      state: present
