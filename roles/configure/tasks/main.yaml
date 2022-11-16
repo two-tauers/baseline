@@ -62,22 +62,37 @@
 
 
 # fan_control
-- name: Enable fan control
+- name: Enable GPIO fan control
   ansible.builtin.lineinfile:
     path: /boot/firmware/config.txt
-    regexp: '^dtoverlay=gpio-fan,gpiopin=3,temp=70000'
+    regexp: '^dtoverlay=gpio-fan'
     line: 'dtoverlay=gpio-fan,gpiopin=3,temp=70000'
     state: present
-  when: fan_control
+  when: fan_control == "gpio"
+  notify: reboot
+    
+- name: POE fan control
+  ansible.builtin.blockinfile:
+    path: /boot/firmware/config.txt
+    marker: "# {mark} POE fan control (ansible managed)"
+    block: |
+      dtparam=poe_fan_temp0=55000
+      dtparam=poe_fan_temp0_hyst=5000
+      dtparam=poe_fan_temp1=60000
+      dtparam=poe_fan_temp1_hyst=5000
+      dtparam=poe_fan_temp2=65000
+      dtparam=poe_fan_temp2_hyst=5000
+      dtparam=poe_fan_temp3=75000
+      dtparam=poe_fan_temp3_hyst=5000
+    state: "{{ 'present' if fan_control == 'poe' else 'absent' }}"
   notify: reboot
 
-- name: Disable fan control
+- name: Disable GPIO fan control
   ansible.builtin.lineinfile:
     path: /boot/firmware/config.txt
-    regexp: '^dtoverlay=gpio-fan,gpiopin=3,temp=70000'
-    line: 'dtoverlay=gpio-fan,gpiopin=3,temp=70000'
+    regexp: '^dtoverlay=gpio-fan'
     state: absent
-  when: not fan_control
+  when: fan_control != "gpio"
   notify: reboot
 
 # timezone
