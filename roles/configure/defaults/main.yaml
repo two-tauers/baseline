@@ -3,6 +3,6 @@ hostname: "{{ inventory_hostname_short }}"
 memsplit: "16"
 wifi_enabled: false
 bt_enabled: false
-fan_control: true
+fan_control: none  # gpio, poe
 timezone: "UTC"
 reboot: true

@@ -18,6 +18,7 @@ all:
       "{{ lookup('env','HOME') }}/.ssh/two-tauers-ansible"
 
     timezone: "Europe/London"
+    fan_control: poe
 
     users:
       - username: "{{ ansible_default_user }}"
