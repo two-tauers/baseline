@@ -27,6 +27,7 @@
   notify: reboot
 
 - name: GPIO fan control
+  # Docs: https://github.com/raspberrypi/firmware/blob/b8a7365c70c68a85a52200cd84b94ea7332bce94/boot/overlays/README#L1191
   ansible.builtin.lineinfile:
     path: /boot/firmware/config.txt
     regexp: '^dtoverlay=gpio-fan'
@@ -35,6 +36,7 @@
   notify: reboot
     
 - name: POE fan control
+  # Docs: https://github.com/raspberrypi/firmware/blob/b8a7365c70c68a85a52200cd84b94ea7332bce94/boot/overlays/README#L3418
   ansible.builtin.blockinfile:
     path: /boot/firmware/config.txt
     marker: "# {mark} POE fan control (ansible managed)"
